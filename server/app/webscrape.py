@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 # types
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, TypedDict, Any
 from dataclasses import dataclass
 from playwright.async_api import async_playwright, Page
 
@@ -27,25 +27,21 @@ class ScrapingResult:
     url: str
     screenshots: Dict[str, str]  # base64 images
     dom_structure: str
-    extracted_css: Dict[str, any]
-    typography: Dict[str, any]
+    extracted_css: Dict[str, bool]
+    typography: Dict[str, bool]
     color_palette: List[str]
-    layout_info: Dict[str, any]
-    assets: Dict[str, str] # urls
-    metadata: Dict[str, any]
+    layout_info: Dict[str, bool]
+    assets: Dict[str, List[str]] # urls
+    metadata: Dict[str, bool]
     success: bool
     error_message: Optional[str] = None
+
+class ViewportSize(TypedDict):
+    width: int
+    height: int
     
 class WebScrape:
     logger.info("scraping website")
-    
-    def create_session():
-        bb = Browserbase(api_key=os.getenv("BROWSERBASE_KEY"))
-        session = bb.sessions.create(
-            project_id=os.getenv("BROWSERBASE_ID"),
-        )
-        return session
-
     
     def __init__(self, use_browserbase: bool = True, browserbase_api_key: str = ""):
         self.use_browserbase = use_browserbase
@@ -125,8 +121,12 @@ class WebScrape:
         
     async def _perform_scraping(self, url: str) -> ScrapingResult:
         try:
-            # Create new page
-            page = await self.context.new_page()
+            if self.context:
+                # Create new page
+                page = await self.context.new_page()
+            else:
+                logger.error(f"self.context does not exist???")
+                raise RuntimeError("Browser context is not initialized")
             
             # Set up request/response interception for better asset tracking
             requests_log = []
@@ -193,7 +193,7 @@ class WebScrape:
     async def _capture_screenshots(self, page: Page) -> Dict[str, str]:
         screenshots = {}
         
-        viewports = {
+        viewports: Dict[str, ViewportSize] = {
             "desktop": {"width": 1920, "height": 1080},
             "tablet": {"width": 768, "height": 1024},
             "mobile": {"width": 375, "height": 667}
@@ -220,7 +220,7 @@ class WebScrape:
         return screenshots
 
     
-    async def _extract_css_info(self, page: Page) -> Dict[str, any]:
+    async def _extract_css_info(self, page: Page) -> Dict[str, Any]:
         css_info = {
             "body_styles": {},
             "header_styles": {},
@@ -560,7 +560,7 @@ class WebScrape:
             return ['#4a90e2', '#f39c12', '#e74c3c']
     
     # TYPOGRAPHY FROM WEBSITE     
-    async def _extract_typography(self, page: Page) -> Dict[str, any]:
+    async def _extract_typography(self, page: Page) -> Dict[str, Any]:
         try:
             typography = await page.evaluate("""
                 () => {
@@ -617,7 +617,7 @@ class WebScrape:
             return {"fonts": [], "headings": {}, "body_text": {}}
 
     # LAYOUT FROM WEBSITE
-    async def _extract_layout_info(self, page: Page) -> Dict[str, any]:
+    async def _extract_layout_info(self, page: Page) -> Dict[str, Any]:
         try:
             layout = await page.evaluate("""
                 () => {
@@ -755,7 +755,7 @@ class WebScrape:
         
         return assets
     
-    async def _extract_metadata(self, page: Page) -> Dict[str, any]:
+    async def _extract_metadata(self, page: Page) -> Dict[str, Any]:
         try:
             metadata = await page.evaluate("""
                 () => {

@@ -16,8 +16,8 @@ load_dotenv()
 
 # Create FastAPI instance
 app = FastAPI(
-    title="Orchids Challenge API",
-    description="A starter FastAPI template for the Orchids Challenge backend",
+    title="webscrape llm project",
+    description="fastapi backend",
     version="1.0.0"
 )
 
@@ -32,7 +32,7 @@ app.add_middleware(
 
 # Initialize OpenAI client
 openai_client = openai.OpenAI(
-    api_key=  os.getenv("OPENAI_KEY")
+    api_key = os.getenv("OPENAI_KEY")
 )
 
 #  MODELS
@@ -93,7 +93,7 @@ manager = ConnectionManager()
 # Initialize scraper
 scraper = WebScrape(
     use_browserbase=False,  # Set to True with API key for production
-    browserbase_api_key=os.getenv("BROWSERBASE_KEY")
+    browserbase_api_key=os.getenv("BROWSERBASE_KEY") or ""
 )
 
 ################# ROOT
@@ -217,19 +217,19 @@ async def process_clone_job(job_id: str, url: str):
             }
         )
                     
-        jobs_db[job_id].completed_at = datetime.now()
+        jobs_db[job_id].completed_at = str(datetime.now())
         jobs_db[job_id].result_data = {
             "original_url": url,
             "generated_html": generated_html,
             "scraping_metadata": {
-            "colors_found": len(scraping_result.color_palette),
-            "images_found": len(scraping_result.assets.get("images", [])),
-            "fonts_found": len(scraping_result.typography.get("fonts", [])),
-            "screenshots_taken": list(scraping_result.screenshots.keys()),
-            "layout_type": scraping_result.layout_info.get("type"),
-            "dominant_color": scraping_result.color_palette[0] if scraping_result.color_palette else None,
-            "title": scraping_result.metadata.get("title"),
-            "description": scraping_result.metadata.get("description"),
+                "colors_found": scraping_result.color_palette,
+                "images_found": scraping_result.assets.get("images", []),
+                "fonts_found": scraping_result.typography.get("fonts", []),
+                "screenshots_taken": list(scraping_result.screenshots.keys()),
+                "layout_type": scraping_result.layout_info.get("type"),
+                "dominant_color": scraping_result.color_palette[0] if scraping_result.color_palette else None,
+                "title": scraping_result.metadata.get("title"),
+                "description": scraping_result.metadata.get("description"),
             }
         }
         
@@ -238,7 +238,7 @@ async def process_clone_job(job_id: str, url: str):
         jobs_db[job_id].status = CloneStatus.FAILED
         jobs_db[job_id].progress = 0
         jobs_db[job_id].error_message = str(e)
-        jobs_db[job_id].completed_at = datetime.now()
+        jobs_db[job_id].completed_at = str(datetime.now())
         
         await manager.send_update(
             job_id,
@@ -291,6 +291,9 @@ async def generate_html_with_llm(processed_data: Dict) -> str:
         )
         
         generated_html = response.choices[0].message.content
+        
+        if generated_html is None:
+            return "" 
         
         # Clean up the response (remove markdown code blocks if present)
         if "```html" in generated_html:
