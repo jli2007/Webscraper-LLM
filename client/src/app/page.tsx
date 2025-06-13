@@ -137,7 +137,7 @@ export default function Home() {
     <div className="w-screen h-screen min-h-screen relative bg-[url('/bg1.png')] bg-cover bg-center">
       <div className="flex w-full items-center justify-center">
         <div className="p-5 flex items-center justify-center flex-col gap-3 w-[90%] bg-pink-200/70 rounded-b-xl">
-          <h1 className="font-bold text-transparent text-2xl bg-clip-text bg-linear-to-r from-pink-400/80 via-pink-800/70 to-pink-600/70 animate-gradient-x">orchids-challenge</h1>
+          <h1 className="font-bold text-transparent text-2xl bg-clip-text bg-linear-to-r from-pink-400/80 via-pink-800/70 to-pink-600/70 animate-gradient-x">Webscraper LLM Clone</h1>
 
           <Input
             type="text"
@@ -153,7 +153,7 @@ export default function Home() {
             variant={"secondary"}
             onClick={cloneWebsite}
           >
-            <h1 className="text-transparent bg-clip-text bg-linear-to-r from-pink-600/70 via-pink-800/70 to-pink-400/80 animate-gradient-x">CLONE!</h1>
+            <h1 className="text-transparent bg-clip-text bg-linear-to-r from-pink-600/70 via-pink-800/70 to-pink-400/80 animate-gradient-x">CLONE ...</h1>
           </Button>
 
           <ProgressBar status={status} progress={progress} />

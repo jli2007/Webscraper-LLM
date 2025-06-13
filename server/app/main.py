@@ -83,7 +83,6 @@ class ConnectionManager:
 
     async def send_update(self, job_id: str, data: dict):        
         # Sends a JSON dict down the socket for job_id, if still connected.
-
         ws = self.active_connections.get(job_id)
         if ws:
             await ws.send_json(data)
@@ -92,7 +91,7 @@ manager = ConnectionManager()
 
 # Initialize scraper
 scraper = WebScrape(
-    use_browserbase=False,  # Set to True with API key for production
+    use_browserbase=True, # true to use browserbase (1hr cap total), false to use local
     browserbase_api_key=os.getenv("BROWSERBASE_KEY") or ""
 )
 
@@ -102,6 +101,7 @@ async def root():
     return {
         "message": "Website Cloner API", 
         "status": "running",
+        # yo like this gotta be fixed
         "endpoints": {
             "start_clone": "POST /api/clone",
             "check_status": "GET /api/clone/{job_id}/status", 
@@ -267,7 +267,6 @@ async def process_scraping_data(scraping_result: ScrapingResult) -> Dict:
     
 async def generate_html_with_llm(processed_data: Dict) -> str:
     # generate the website with llm
-    
     try:
         # Prepare the prompt with scraped data
         prompt = create_html_generation_prompt(processed_data)
@@ -500,7 +499,6 @@ def main():
         port=8000,
         reload=True
     )
-
 
 if __name__ == "__main__":
     main()
