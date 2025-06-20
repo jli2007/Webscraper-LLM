@@ -1,4 +1,4 @@
-### web scraper llm
+# Webscraper LLM Cloner
 web scraper (fast api, browserbase) --> llm (openai) --> client (nextjs)
 
 websocket communication
