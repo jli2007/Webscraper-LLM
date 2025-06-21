@@ -240,7 +240,7 @@ class WebScrape:
     async def _capture_screenshots(self, page: Page) -> Dict[str, str]:
         screenshots = {}
 
-        viewports = {
+        viewports: Dict[str, ViewportSize] = {
             "desktop": {"width": 1920, "height": 1080},
             "desktop_wide": {"width": 2560, "height": 1440},
             "tablet": {"width": 768, "height": 1024},
@@ -279,10 +279,11 @@ class WebScrape:
                     above_fold_bytes
                 ).decode("utf-8")
 
-                return screenshots
+            return screenshots
 
         except Exception as e:
             logger.error(f"Screenshot capture failed: {str(e)}")
+            return {}
 
     async def _capture_interaction_states(self, page: Page) -> Dict[str, str]:
         interaction_states = {}
@@ -326,11 +327,12 @@ class WebScrape:
                             f"Failed to capture interaction state for {selector}: {e}"
                         )
                         continue
-
-                    return interaction_states
+            
+            return interaction_states
 
         except Exception as e:
             logger.error(f"Interaction state capture failed: {str(e)}")
+            return {}
 
     async def _extract_computed_styles(self, page: Page) -> Dict[str, Any]:
         try:
@@ -487,6 +489,7 @@ class WebScrape:
 
         except Exception as e:
             logger.error(f"Asset extraction failed: {str(e)}")
+            return {}
 
     async def _extract_metadata(self, page: Page) -> Dict[str, Any]:
         try:

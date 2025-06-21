@@ -11,6 +11,7 @@ from enum import Enum
 from datetime import datetime
 from webscrape import ScrapingResult, WebScrape
 from dotenv import load_dotenv
+from bs4 import Tag, BeautifulSoup
 
 load_dotenv()
 
@@ -797,7 +798,6 @@ def _analyze_card_components(cards: List) -> str:
 def _extract_dom_preview(dom_structure: str) -> str:
     """Extract a clean preview of DOM structure"""
     try:
-        from bs4 import BeautifulSoup
 
         soup = BeautifulSoup(dom_structure, "html.parser")
 
@@ -808,23 +808,25 @@ def _extract_dom_preview(dom_structure: str) -> str:
         for tag in ["header", "nav", "main", "section", "article", "aside", "footer"]:
             elements = soup.find_all(tag)
             for elem in elements[:2]:  # Max 2 of each
-                # Simplify the element
-                elem_preview = f"<{elem.name}"
-                if elem.get("class"):
-                    elem_preview += (
-                        f' class="{" ".join(elem["class"][:2])}"'  # Max 2 classes
-                    )
-                if elem.get("id"):
-                    elem_preview += f' id="{elem["id"]}"'
-                elem_preview += ">"
-                preview_elements.append(elem_preview)
+                # Only process Tag objects, skip NavigableString and other types
+                if isinstance(elem, Tag):
+                    # Simplify the element
+                    elem_preview = f"<{elem.name}"
+                    if elem.get("class"):
+                        elem_preview += (
+                            f' class="{" ".join(elem["class"][:2])}"'  # Max 2 classes
+                        )
+                    if elem.get("id"):
+                        elem_preview += f' id="{elem["id"]}"'
+                    elem_preview += ">"
+                    preview_elements.append(elem_preview)
 
         # Limit preview length
         preview = "\n".join(preview_elements[:10])
         return preview[:500] + "..." if len(preview) > 500 else preview
 
     except Exception:
-        # Fallback to simple text truncation
+         # Fallback to simple text truncation
         return dom_structure[:500] + "..."
 
 
