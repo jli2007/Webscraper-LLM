@@ -1,7 +1,9 @@
 # Webscraper LLM Cloner
-web scraper (fast api, browserbase) --> llm (openai) --> client (nextjs)
+#### web scraper (fast api, browserbase) --> llm (openai) --> client (nextjs).
 
-websocket communication
+### essentially scrapes a website for data, sends it to openai (yes, claude would be more optimal) and asks it to generate a website based on the information gathered.
+
+#### note: works well with basic websites, not so well with modern ones. too lazy to optimize for now.
 
 ## Backend
 

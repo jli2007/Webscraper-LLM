@@ -7,9 +7,8 @@ import ProgressBar from "@/components/progress";
 export default function Home() {
   const ws = useRef<WebSocket | null>(null);
   const [userInput, setUserInput] = useState<string>(
-    "https://tailwindcss.com"
+    "https://quotes.toscrape.com/"
   );
-  // https://quotes.toscrape.com/
   const [status, setStatus] = useState<
     | ""
     | "PENDING"

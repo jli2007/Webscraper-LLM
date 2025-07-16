@@ -227,72 +227,72 @@ async def process_clone_job(job_id: str, url: str):
         jobs_db[job_id].result_data = {
             "original_url": url,
             "generated_html": generated_html,
-            "scraping_metdata": {
+            "scraping_metadata": {
                 # Visual hierarchy information
-            "visual_hierarchy": scraping_result.visual_hierarchy,
-            "has_header": scraping_result.visual_hierarchy.get("header") is not None,
-            "has_navigation": scraping_result.visual_hierarchy.get("navigation") is not None,
-            "has_hero": scraping_result.visual_hierarchy.get("hero_section") is not None,
-            "content_sections": len(scraping_result.visual_hierarchy.get("main_content", [])),
-            
-            # Design tokens
-            "color_palette": scraping_result.design_tokens.get("colors", {}).get("background", []),
-            "text_colors": scraping_result.design_tokens.get("colors", {}).get("text", []),
-            "primary_colors": scraping_result.design_tokens.get("colors", {}).get("primary", []),
-            "dominant_color": (
-                scraping_result.design_tokens.get("colors", {}).get("background", [None])[0] 
-                if scraping_result.design_tokens.get("colors", {}).get("background") 
-                else None
-            ),
-            
-            # Typography
-            "typography": scraping_result.design_tokens.get("typography", {}),
-            "fonts_found": scraping_result.design_tokens.get("typography", {}).get("font_families", []),
-            "heading_font": scraping_result.design_tokens.get("typography", {}).get("headings", {}).get("fontFamily"),
-            "body_font": scraping_result.design_tokens.get("typography", {}).get("body", {}).get("fontFamily"),
-            
-            # Layout and components
-            "layout_patterns": scraping_result.layout_patterns,
-            "components_identified": scraping_result.component_library,
-            "component_count": len(scraping_result.component_library),
-            "has_grid_layout": len(scraping_result.layout_patterns.get("grid_layouts", [])) > 0,
-            "has_flex_layout": len(scraping_result.layout_patterns.get("flex_layouts", [])) > 0,
-            
-            # Responsive information
-            "responsive_screenshots": list(scraping_result.responsive_previews.keys()),
-            "breakpoints_captured": len(scraping_result.responsive_previews),
-            
-            # Simplified code references
-            "reference_html": scraping_result.critical_html,
-            "reference_css": scraping_result.critical_css,
-            
-            # Legacy compatibility (if you need to maintain some old structure)
-            "screenshots_taken": ["primary_screenshot", "annotated_screenshot"] + list(scraping_result.responsive_previews.keys()),
-            "layout_type": "responsive" if scraping_result.responsive_previews else "desktop",
-            
-            # Page metadata (if you still extract this)
-            "title": scraping_result.visual_hierarchy.get("header", {}).get("text", "")[:100] if scraping_result.visual_hierarchy.get("header") else "Unknown",
-            "description": scraping_result.visual_hierarchy.get("hero_section", {}).get("text", "")[:200] if scraping_result.visual_hierarchy.get("hero_section") else "",
-            
-            # Success indicators
-            "scraping_success": scraping_result.success,
-            "error_message": scraping_result.error_message,
-            
-            # Quality metrics
-            "data_quality": {
-                "has_visual_hierarchy": bool(scraping_result.visual_hierarchy),
-                "has_design_tokens": bool(scraping_result.design_tokens),
-                "has_components": bool(scraping_result.component_library),
-                "has_primary_screenshot": bool(scraping_result.primary_screenshot),
-                "completeness_score": sum([
-                    bool(scraping_result.visual_hierarchy),
-                    bool(scraping_result.design_tokens),
-                    bool(scraping_result.component_library),
-                    bool(scraping_result.primary_screenshot),
-                    bool(scraping_result.critical_html),
-                    bool(scraping_result.critical_css)
-                ]) / 6.0
-            }
+                "visual_hierarchy": scraping_result.visual_hierarchy,
+                "has_header": scraping_result.visual_hierarchy.get("header") is not None,
+                "has_navigation": scraping_result.visual_hierarchy.get("navigation") is not None,
+                "has_hero": scraping_result.visual_hierarchy.get("hero_section") is not None,
+                "content_sections": len(scraping_result.visual_hierarchy.get("main_content", [])),
+                
+                # Design tokens
+                "color_palette": scraping_result.design_tokens.get("colors", {}).get("background", []),
+                "text_colors": scraping_result.design_tokens.get("colors", {}).get("text", []),
+                "primary_colors": scraping_result.design_tokens.get("colors", {}).get("primary", []),
+                "dominant_color": (
+                    scraping_result.design_tokens.get("colors", {}).get("background", [None])[0] 
+                    if scraping_result.design_tokens.get("colors", {}).get("background") 
+                    else None
+                ),
+                
+                # Typography
+                "typography": scraping_result.design_tokens.get("typography", {}),
+                "fonts_found": scraping_result.design_tokens.get("typography", {}).get("font_families", []),
+                "heading_font": scraping_result.design_tokens.get("typography", {}).get("headings", {}).get("fontFamily"),
+                "body_font": scraping_result.design_tokens.get("typography", {}).get("body", {}).get("fontFamily"),
+                
+                # Layout and components
+                "layout_patterns": scraping_result.layout_patterns,
+                "components_identified": scraping_result.component_library,
+                "component_count": len(scraping_result.component_library),
+                "has_grid_layout": len(scraping_result.layout_patterns.get("grid_layouts", [])) > 0,
+                "has_flex_layout": len(scraping_result.layout_patterns.get("flex_layouts", [])) > 0,
+                
+                # Responsive information
+                "responsive_screenshots": list(scraping_result.responsive_previews.keys()),
+                "breakpoints_captured": len(scraping_result.responsive_previews),
+                
+                # Simplified code references
+                "reference_html": scraping_result.critical_html,
+                "reference_css": scraping_result.critical_css,
+                
+                # Legacy compatibility (if you need to maintain some old structure)
+                "screenshots_taken": ["primary_screenshot", "annotated_screenshot"] + list(scraping_result.responsive_previews.keys()),
+                "layout_type": "responsive" if scraping_result.responsive_previews else "desktop",
+                
+                # Page metadata (if you still extract this)
+                "title": scraping_result.visual_hierarchy.get("header", {}).get("text", "")[:100] if scraping_result.visual_hierarchy.get("header") else "Unknown",
+                "description": scraping_result.visual_hierarchy.get("hero_section", {}).get("text", "")[:200] if scraping_result.visual_hierarchy.get("hero_section") else "",
+                
+                # Success indicators
+                "scraping_success": scraping_result.success,
+                "error_message": scraping_result.error_message,
+                
+                # Quality metrics
+                "data_quality": {
+                    "has_visual_hierarchy": bool(scraping_result.visual_hierarchy),
+                    "has_design_tokens": bool(scraping_result.design_tokens),
+                    "has_components": bool(scraping_result.component_library),
+                    "has_primary_screenshot": bool(scraping_result.primary_screenshot),
+                    "completeness_score": sum([
+                        bool(scraping_result.visual_hierarchy),
+                        bool(scraping_result.design_tokens),
+                        bool(scraping_result.component_library),
+                        bool(scraping_result.primary_screenshot),
+                        bool(scraping_result.critical_html),
+                        bool(scraping_result.critical_css)
+                    ]) / 6.0
+                }
             }
         }
 
